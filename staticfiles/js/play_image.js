@@ -159,7 +159,7 @@ function checkAnswer(guess, answer, btn) {
   imgState.answered = true;
   imgState.total++;
 
-  // Reveal all tiles
+  // Reveal all remaining tiles instantly
   for (let i = 0; i < imgState.totalTiles; i++) {
     const tile = document.getElementById(`tile-${i}`);
     if (tile) tile.classList.add('revealed');
@@ -175,6 +175,11 @@ function checkAnswer(guess, answer, btn) {
   if (guess === answer) {
     imgState.score++;
     setFeedback(`✦ Correct! "${answer}" ✦`, 'correct');
+    
+    // TRIGGER HOST CONTROLS: Show the buttons to award points to the winning group
+    if (typeof showAwardButtons === "function") {
+        showAwardButtons();
+    }
   } else {
     btn.classList.add('wrong');
     setFeedback(`The answer is "${answer}"`, 'wrong');
@@ -187,7 +192,7 @@ function checkAnswer(guess, answer, btn) {
   }
 
   document.getElementById('next-btn').style.display = 'inline-block';
-  updateScore();
+  updateScore(); // This updates the local question count score, not the team points
 }
 
 function setFeedback(msg, type) {

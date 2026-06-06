@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET, require_POST
 from django.views.decorators.csrf import csrf_exempt
-from .models import ImageGuess, ChapterGuess, WordleQuiz, MusicGuess
+from .models import ImageGuess, ChapterGuess, WordleQuiz, MusicGuess, Team
 
 
 # ─── Page Views ───────────────────────────────────────────────
@@ -90,21 +90,22 @@ def api_wordle_check(request):
     guess = data.get('guess', '').upper().strip()
     answer = data.get('answer', '').upper().strip()
 
-    if len(guess) != len(answer):
-        return JsonResponse({'error': f'Guess must be {len(answer)} letters'}, status=400)
+    if not guess:
+        return JsonResponse({'error': 'Tebakan tidak boleh kosong'}, status=400)
 
     answer_chars = list(answer)
     guess_chars = list(guess)
     used = [False] * len(answer)
     marks = ['absent'] * len(guess)
 
-    # Pass 1: correct position
-    for i in range(len(guess)):
+    # Pass 1: Cek posisi yang tepat (Hijau)
+    min_length = min(len(guess), len(answer))
+    for i in range(min_length):
         if guess_chars[i] == answer_chars[i]:
             marks[i] = 'correct'
             used[i] = True
 
-    # Pass 2: wrong position
+    # Pass 2: Cek huruf yang ada tapi salah posisi (Kuning)
     for i in range(len(guess)):
         if marks[i] == 'correct':
             continue
@@ -135,6 +136,28 @@ def api_music(request):
         'choices': choices,
         'fun_fact': item.fun_fact,
     })
+
+
+@require_GET
+def api_get_teams(request):
+    teams = Team.objects.filter(is_active=True).order_by('id')
+    data = [{'id': t.id, 'name': t.name, 'score': t.score} for t in teams]
+    return JsonResponse({'teams': data})
+
+@csrf_exempt
+@require_POST
+def api_award_points(request):
+    data = json.loads(request.body)
+    team_id = data.get('team_id')
+    points = data.get('points', 10) # Default 10 points per correct answer
+    
+    try:
+        team = Team.objects.get(id=team_id)
+        team.score += points
+        team.save()
+        return JsonResponse({'success': True, 'new_score': team.score})
+    except Team.DoesNotExist:
+        return JsonResponse({'error': 'Team not found'}, status=404)
 
 
 # ─── Helpers ──────────────────────────────────────────────────

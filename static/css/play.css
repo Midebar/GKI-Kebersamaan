@@ -281,6 +281,10 @@ audio { width: 100%; }
 /* ─── Wordle ─────────────────────────────────────────────── */
 .wordle-card .card-body { padding: 1.5rem; }
 
+.wordle-card {
+    background: var(--navy) !important; /* Keep the dark background */
+}
+
 .wordle-meta {
   display: flex; gap: 0.5rem; flex-wrap: wrap;
   margin-bottom: 1rem;
@@ -300,24 +304,65 @@ audio { width: 100%; }
   margin: 1rem 0;
 }
 
-.wordle-row { display: flex; gap: 5px; }
+.wordle-row {
+    display: flex !important;
+    justify-content: center !important;
+    flex-wrap: wrap !important; /* Allows wrapping if screen is too narrow */
+    gap: 4px !important;
+    margin-bottom: 10px !important;
+}
 
 .wordle-cell {
-  width: 46px; height: 46px;
-  border: 2px solid rgba(200,134,12,0.2);
-  display: flex; align-items: center; justify-content: center;
-  font-family: 'Cinzel', serif; font-size: 1.1rem; font-weight: 700;
-  color: var(--cream); text-transform: uppercase;
-  background: rgba(30,51,80,0.6);
-  transition: border-color 0.15s;
-  user-select: none;
+    /* Set a larger minimum size */
+    min-width: 40px !important; 
+    min-height: 40px !important;
+    
+    /* Ensure the font is readable */
+    font-size: 1.5rem !important; 
+    font-weight: 700 !important;
+    font-family: 'Cinzel', serif !important;
+    
+    /* Center the text perfectly */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    
+    /* Ensure a consistent look */
+    border: 2px solid var(--navy-light) !important;
+    background: var(--navy-mid) !important;
+    color: var(--cream) !important;
+    margin: 2px !important;
 }
-.wordle-cell.filled { border-color: rgba(200,134,12,0.6); }
-.wordle-cell.correct { background: #1a5c3a; border-color: #28804e; color: #b0ffca; }
-.wordle-cell.present { background: #7a5200; border-color: #aa7400; color: #ffd060; }
-.wordle-cell.absent  { background: #1a2030; border-color: #2a3040; color: #607080; }
 
-.wordle-cell.flip { animation: cellFlip 0.45s ease forwards; }
+.wordle-cell.filled { border-color: rgba(200,134,12,0.6); }
+/* Ensure the flip/revealed states don't flash white */
+.wordle-cell.correct { background-color: var(--jade) !important; border-color: var(--jade-l) !important; color: #fff; }
+.wordle-cell.present { background-color: #7a5200 !important; border-color: #aa7400 !important; color: #fff; }
+.wordle-cell.absent  { background-color: var(--navy) !important; border-color: var(--navy-light) !important; color: #607080; }
+
+/* If there is a generic 'flip' animation, ensure it doesn't have a background property set to white */
+.flip {
+    /* Check your existing .flip animation and REMOVE 'background: white' if present */
+    animation: flip-anim 0.6s ease;
+}
+
+/* Define the flip animation */
+@keyframes flip-in {
+  0% { transform: rotateX(-90deg); }
+  100% { transform: rotateX(0deg); }
+}
+
+/* Ensure the flip class triggers the animation */
+.wordle-cell.flip {
+  animation: flip-in 0.6s ease-out forwards;
+}
+
+/* Base styles for the cell when it flips */
+.wordle-cell {
+  transform-style: preserve-3d;
+  transition: background-color 0.4s ease;
+}
+
 @keyframes cellFlip {
   0%   { transform: rotateX(0); }
   50%  { transform: rotateX(90deg); background: var(--navy); }

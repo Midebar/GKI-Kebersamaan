@@ -24,6 +24,11 @@ async function loadQuestion() {
   document.getElementById('next-ctrl').style.display = 'none';
   setFeedback('', '');
 
+  // Add this inside loadQuestion() right before the fetch() call:
+    ws.hintIdx = 0; // Track how many hints have been used
+    document.getElementById('hint1-strip').style.display = 'none';
+    document.getElementById('hint2-strip').style.display = 'none';
+    document.getElementById('hint-btn').disabled = false;
   try {
     const r = await fetch('/api/wordle/');
     if (!r.ok) { const e = await r.json(); showError(e.error); return; }
@@ -37,15 +42,19 @@ async function loadQuestion() {
 
 function renderWordle(d) {
   document.getElementById('wordle-cat').textContent = `📂 ${d.category}`;
-  document.getElementById('wordle-len').textContent = `${d.length} letters`;
+  document.getElementById('wordle-len').textContent = `Misteri Huruf`; // Hide the length!
   document.getElementById('wordle-att').textContent = `${d.max_attempts} attempts`;
   document.getElementById('hint-text').textContent = d.hint;
   document.getElementById('hint2-strip').style.display = 'none';
   document.getElementById('fun-fact').style.display = 'none';
 
-  document.getElementById('wordle-input').maxLength = d.length;
-  document.getElementById('wordle-input').placeholder = `${d.length}-letter word…`;
+  document.getElementById('wordle-input').maxLength = 20;
+  document.getElementById('wordle-input').placeholder = `Ketik tebakan...`;
   document.getElementById('wordle-input').value = '';
+
+  // Show the hint button if at least one hint exists in the database
+  const hasHints = ws.data.hint || ws.data.hint_2;
+  document.getElementById('hint-btn').style.display = hasHints ? 'inline-block' : 'none';
 
   buildGrid();
   buildKeyboard();
@@ -58,17 +67,42 @@ function renderWordle(d) {
 function buildGrid() {
   const grid = document.getElementById('wordle-grid');
   grid.innerHTML = '';
-  for (let r = 0; r < ws.maxAttempts; r++) {
-    const row = document.createElement('div');
-    row.className = 'wordle-row';
-    row.id = `row-${r}`;
-    for (let c = 0; c < ws.length; c++) {
-      const cell = document.createElement('div');
-      cell.className = 'wordle-cell';
-      cell.id = `cell-${r}-${c}`;
-      row.appendChild(cell);
+  appendWordleRow(0); // Start with just the first row
+}
+
+function appendWordleRow(rowIndex) {
+  const grid = document.getElementById('wordle-grid');
+  const row = document.createElement('div');
+  row.className = 'wordle-row';
+  row.id = `row-${rowIndex}`;
+  
+  for (let c = 0; c < 20; c++) {
+    const cell = document.createElement('div');
+    cell.className = 'wordle-cell'; // The CSS class now handles all styling
+    cell.id = `cell-${rowIndex}-${c}`;
+    row.appendChild(cell);
+  }
+  grid.appendChild(row);
+}
+
+function updateRow() {
+  for (let c = 0; c < 20; c++) {
+    const cell = document.getElementById(`cell-${ws.currentRow}-${c}`);
+    if (!cell) continue;
+    const letter = ws.currentGuess[c] || '';
+    cell.textContent = letter;
+    
+    if (letter) {
+        cell.className = 'wordle-cell filled';
+        cell.style.border = '2px solid #555'; // Dark border for visibility
+        cell.style.background = '#f8f9fa';
+        cell.style.color = '#000'; // Ensure text is visible
+    } else {
+        cell.className = 'wordle-cell';
+        cell.style.border = 'none'; 
+        cell.style.background = 'transparent';
+        cell.style.color = 'transparent';
     }
-    grid.appendChild(row);
   }
 }
 
@@ -90,15 +124,23 @@ function buildKeyboard() {
   });
 }
 
+// Update handleKey to restrict to 20 letters instead of the word's exact length
 function handleKey(key) {
   if (ws.gameOver) return;
+  
+  // To avoid duplicate typing, we force the focus away from the physical input box
+  const inp = document.getElementById('wordle-input');
+  if (document.activeElement === inp) {
+      inp.blur(); 
+  }
+
   if (key === '⌫' || key === 'BACKSPACE') {
     ws.currentGuess = ws.currentGuess.slice(0, -1);
     syncInput();
     updateRow();
   } else if (key === 'ENTER') {
     submitGuess();
-  } else if (/^[A-Z]$/i.test(key) && ws.currentGuess.length < ws.length) {
+  } else if (/^[A-Z]$/i.test(key) && ws.currentGuess.length < 20) { // Max 20 chars
     ws.currentGuess += key.toUpperCase();
     syncInput();
     updateRow();
@@ -116,34 +158,15 @@ document.addEventListener('keydown', e => {
   if (/^[a-zA-Z]$/.test(e.key)) handleKey(e.key.toUpperCase());
 });
 
-document.addEventListener('DOMContentLoaded', () => {
-  const inp = document.getElementById('wordle-input');
-  if (inp) inp.addEventListener('input', e => {
-    const v = e.target.value.toUpperCase().replace(/[^A-Z]/g,'').slice(0, ws.length);
-    e.target.value = v;
-    ws.currentGuess = v;
-    updateRow();
-  });
-});
-
-function updateRow() {
-  for (let c = 0; c < ws.length; c++) {
-    const cell = document.getElementById(`cell-${ws.currentRow}-${c}`);
-    if (!cell) continue;
-    const letter = ws.currentGuess[c] || '';
-    cell.textContent = letter;
-    cell.className = 'wordle-cell' + (letter ? ' filled' : '');
-  }
-}
-
 async function submitGuess() {
   if (ws.gameOver) return;
   const guess = ws.currentGuess.trim();
-  if (guess.length !== ws.length) {
-    shakeRow(ws.currentRow);
-    setFeedback(`Word must be ${ws.length} letters`, 'info');
-    setTimeout(() => setFeedback('', ''), 1800);
-    return;
+  
+  // Prevent empty submissions but allow ANY length up to 20
+  if (guess.length === 0) {
+      setFeedback("Tebakan tidak boleh kosong!", 'info');
+      setTimeout(() => setFeedback('', ''), 1800);
+      return;
   }
 
   try {
@@ -158,38 +181,34 @@ async function submitGuess() {
     revealRow(ws.currentRow, d.result);
     d.result.forEach(({ letter, status }) => {
       const p = { correct: 3, present: 2, absent: 1 };
-      if (!ws.letterStates[letter] || p[status] > p[ws.letterStates[letter]])
+      if (!ws.letterStates[letter] || p[status] > (p[ws.letterStates[letter]] || 0))
         ws.letterStates[letter] = status;
     });
 
-    ws.currentRow++;
-    ws.currentGuess = '';
-    document.getElementById('wordle-input').value = '';
-
-    // Reveal hint 2 at halfway
-    if (!ws.hint2Shown && ws.data.hint_2 && ws.currentRow >= Math.floor(ws.maxAttempts / 2)) {
-      ws.hint2Shown = true;
-      document.getElementById('hint2-text').textContent = ws.data.hint_2;
-      document.getElementById('hint2-strip').style.display = 'flex';
-    }
-
-    const delay = ws.length * 80 + 350;
+    // The delay must match the length of the *guess*, not the answer
+    const delay = guess.length * 80 + 350;
+    
     if (d.correct) {
       ws.gameOver = true; ws.score++; ws.total++;
       setTimeout(() => {
         setFeedback(`✦ Glorious! The word is "${ws.answer}" ✦`, 'correct');
         showFunFact();
         document.getElementById('next-ctrl').style.display = 'flex';
+        if (typeof showAwardButtons === "function") showAwardButtons();
       }, delay);
-      updateScore();
-    } else if (ws.currentRow >= ws.maxAttempts) {
-      ws.gameOver = true; ws.total++;
+    } else {
+      ws.currentRow++;
+      ws.currentGuess = '';
+      syncInput();
+      
       setTimeout(() => {
-        setFeedback(`The word was "${ws.answer}". Keep studying! 📖`, 'info');
-        showFunFact();
-        document.getElementById('next-ctrl').style.display = 'flex';
+        appendWordleRow(ws.currentRow);
+        if (!ws.hint2Shown && ws.data.hint_2 && ws.currentRow >= 4) {
+          ws.hint2Shown = true;
+          document.getElementById('hint2-text').textContent = ws.data.hint_2;
+          document.getElementById('hint2-strip').style.display = 'flex';
+        }
       }, delay);
-      updateScore();
     }
     setTimeout(updateKeyboard, delay);
   } catch(e) { console.error(e); }
@@ -201,7 +220,13 @@ function revealRow(rowIdx, result) {
       const cell = document.getElementById(`cell-${rowIdx}-${col}`);
       if (!cell) return;
       cell.textContent = letter;
-      cell.className = `wordle-cell flip ${status}`;
+      
+      // Remove previous styling and add the status
+      cell.className = `wordle-cell ${status}`; 
+      
+      // Ensure the text and background contrast correctly
+      cell.style.color = '#fff'; 
+      // Do not set background here! Let the CSS class (e.g., .correct) handle it.
     }, col * 80);
   });
 }
@@ -244,6 +269,24 @@ function updateScore() {
 function showError(msg) {
   document.getElementById('loading').innerHTML =
     `<p style="color:#ff8090;font-style:italic">${msg}</p>`;
+}
+
+function showHint() {
+  if (ws.hintIdx === 0 && ws.data.hint) {
+      document.getElementById('hint-text').textContent = ws.data.hint;
+      document.getElementById('hint1-strip').style.display = 'flex';
+      ws.hintIdx++;
+  } else if (ws.hintIdx === 1 && ws.data.hint_2) {
+      document.getElementById('hint2-text').textContent = ws.data.hint_2;
+      document.getElementById('hint2-strip').style.display = 'flex';
+      ws.hintIdx++;
+  }
+  
+  // Disable the button if there are no more hints left
+  const totalHints = (ws.data.hint ? 1 : 0) + (ws.data.hint_2 ? 1 : 0);
+  if (ws.hintIdx >= totalHints) {
+      document.getElementById('hint-btn').disabled = true;
+  }
 }
 
 loadQuestion();

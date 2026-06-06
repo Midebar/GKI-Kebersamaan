@@ -1,19 +1,19 @@
 {% extends 'Randomquiz/base.html' %}
 {% load static %}
-{% block title %}Reveal &amp; Guess — Scripture Quest{% endblock %}
+{% block title %}Tebak Gambar{% endblock %}
 {% block extra_css %}<link rel="stylesheet" href="{% static 'css/play.css' %}">{% endblock %}
 
 {% block content %}
 <div class="play-wrap">
   <div class="play-header">
-    <a href="{% url 'Randomquiz:quiz_home' %}" class="back-btn">← Back</a>
-    <div class="play-mode-label">🔍 Reveal &amp; Guess</div>
+    <a href="{% url 'Randomquiz:quiz_home' %}" class="back-btn">Back</a>
+    <div class="play-mode-label">Tebak Gambar</div>
     <div class="score-pill">Score: <span id="score">0</span>/<span id="total">0</span></div>
   </div>
 
   <div class="card" id="card">
     <div class="card-loading" id="loading">
-      <div class="spinner"></div><p>Preparing the image…</p>
+      <div class="spinner"></div><p>Loading…</p>
     </div>
     <div class="card-body" id="body" style="display:none">
       <div class="image-arena">
@@ -25,7 +25,7 @@
       <div class="reveal-bar">
         <span class="reveal-label">Revealed: <span id="reveal-pct">0</span>%</span>
         <button class="btn-reveal" id="reveal-btn" onclick="revealMore()">
-          Reveal More 🔍
+          Hint Selanjutnya
         </button>
       </div>
       <div class="hint-strip" id="hint-strip" style="display:none">
@@ -35,7 +35,7 @@
       <div class="feedback" id="feedback"></div>
       <div class="fun-fact-box" id="fun-fact" style="display:none"></div>
       <div class="card-controls">
-        <button class="btn-primary" id="next-btn" onclick="loadQuestion()" style="display:none">Next Image →</button>
+        <button class="btn-primary" id="next-btn" onclick="loadQuestion()" style="display:none">Gambar Selanjutnya</button>
       </div>
     </div>
   </div>
