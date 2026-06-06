@@ -1,0 +1,92 @@
+{% extends 'Randomquiz/base.html' %}
+{% load static %}
+
+{% block title %}Random Quiz{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="hero-inner">
+    <p class="hero-eyebrow">GKI Kebersamaan 2026 Juni</p>
+    <h1 class="hero-title">Random Quiz</h1>
+  </div>
+</section>
+
+<section class="modes-grid">
+
+  <a href="{% url 'Randomquiz:quiz_music' %}" class="mode-card mode-music">
+    <div class="mode-bg-art music-art">
+      <div class="music-note n1">♪</div>
+      <div class="music-note n2">♫</div>
+      <div class="music-note n3">♩</div>
+      <div class="music-note n4">♬</div>
+    </div>
+    <div class="mode-content">
+      <div class="mode-icon">🎵</div>
+      <h2 class="mode-title">Tebak Lagu</h2>
+      <p class="mode-desc">Tebak lagu hiburan atau worship dari liriknya saja. Bisa kamu sebutkan melodi suci ini?</p>
+      <span class="mode-cta">Main Sekarang</span>
+    </div>
+    <div class="mode-badge">Musik</div>
+  </a>
+
+  <a href="{% url 'Randomquiz:quiz_bible' %}" class="mode-card mode-chapter">
+    <div class="mode-bg-art chapter-art">
+      <div class="scroll-line l1"></div>
+      <div class="scroll-line l2"></div>
+      <div class="scroll-line l3"></div>
+      <div class="scroll-line l4"></div>
+      <div class="scroll-line l5"></div>
+    </div>
+    <div class="mode-content">
+      <div class="mode-icon">📜</div>
+      <h2 class="mode-title">Tebak Kitab</h2>
+      <p class="mode-desc">Tebak kitab / tokoh dari Alkitab dari deskripsi atau kutipan yang diberikan.</p>
+      <span class="mode-cta">Main Sekarang</span>
+    </div>
+    <div class="mode-badge">Kitab</div>
+  </a>
+
+  <a href="{% url 'Randomquiz:quiz_image' %}" class="mode-card mode-image">
+    <div class="mode-bg-art image-art">
+      <div class="fragment f1"></div>
+      <div class="fragment f2"></div>
+      <div class="fragment f3"></div>
+      <div class="fragment f4"></div>
+      <div class="fragment f5"></div>
+      <div class="fragment f6"></div>
+      <div class="fragment f7"></div>
+      <div class="fragment f8"></div>
+      <div class="fragment f9"></div>
+    </div>
+    <div class="mode-content">
+      <div class="mode-icon">🔍</div>
+      <h2 class="mode-title">Tebak Gambar</h2>
+      <p class="mode-desc">Tebak gambar dari fragmen-fragmen yang diberikan.</p>
+      <span class="mode-cta">Main Sekarang</span>
+    </div>
+    <div class="mode-badge">Gambar</div>
+  </a>
+
+  <a href="{% url 'Randomquiz:quiz_wordle' %}" class="mode-card mode-wordle">
+    <div class="mode-bg-art wordle-art">
+      <div class="w-cell correct">G</div>
+      <div class="w-cell present">R</div>
+      <div class="w-cell absent">X</div>
+      <div class="w-cell correct">C</div>
+      <div class="w-cell present">E</div>
+    </div>
+    <div class="mode-content">
+      <div class="mode-icon">✝️</div>
+      <h2 class="mode-title">Tebak Kata</h2>
+      <p class="mode-desc">Wordle dengan kata-kata Alkitab. Hijau berarti tempat yang benar, emas berarti huruf yang benar tapi di tempat salah.</p>
+      <span class="mode-cta">Main Sekarang</span>
+    </div>
+    <div class="mode-badge">Wordle</div>
+  </a>
+
+</section>
+
+<footer class="site-footer">
+  <p>Tema Kebersamaan 2026 Juni</p>
+</footer>
+{% endblock %}

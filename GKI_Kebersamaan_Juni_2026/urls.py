@@ -16,8 +16,10 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path
+from django.urls import include, path
+from Randomquiz import urls as randomquiz_urls
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("", include(randomquiz_urls)),
 ]

@@ -1,0 +1,37 @@
+{% extends 'Randomquiz/base.html' %}
+{% load static %}
+{% block title %}Hymn Quest — Scripture Quest{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/play.css' %}">{% endblock %}
+
+{% block content %}
+<div class="play-wrap">
+  <div class="play-header">
+    <a href="{% url 'Randomquiz:quiz_home' %}" class="back-btn">← Back</a>
+    <div class="play-mode-label">🎵 Hymn Quest</div>
+    <div class="score-pill">Score: <span id="score">0</span>/<span id="total">0</span></div>
+  </div>
+
+  <div class="card" id="card">
+    <div class="card-loading" id="loading">
+      <div class="spinner"></div><p>Opening the hymnal…</p>
+    </div>
+    <div class="card-body" id="body" style="display:none">
+      <div class="music-player" id="audio-section" style="display:none">
+        <audio id="audio-player" controls></audio>
+      </div>
+      <div class="lyric-block" id="lyrics"></div>
+      <div class="hint-strip" id="hint-strip" style="display:none">
+        <span class="hint-eye">👁</span> <span id="hint-text"></span>
+      </div>
+      <div class="choices" id="choices"></div>
+      <div class="feedback" id="feedback"></div>
+      <div class="fun-fact-box" id="fun-fact" style="display:none"></div>
+      <div class="card-controls">
+        <button class="btn-ghost" id="hint-btn" onclick="showHint()">Show Hint</button>
+        <button class="btn-primary" onclick="loadQuestion()">Next Song →</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}<script src="{% static 'js/play_music.js' %}"></script>{% endblock %}

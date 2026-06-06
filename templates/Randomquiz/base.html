@@ -1,0 +1,29 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Random Quiz{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/base.css' %}">
+{% block extra_css %}{% endblock %}
+</head>
+<body>
+<div class="site-bg"></div>
+<div class="grain"></div>
+
+<header class="site-header">
+  <a href="{% url 'Randomquiz:quiz_home' %}" class="site-logo">
+    <span class="logo-cross">✝</span>
+    <span class="logo-text">Random Quiz</span>
+  </a>
+</header>
+
+<main>{% block content %}{% endblock %}</main>
+
+<script>{% block inline_js %}{% endblock %}</script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

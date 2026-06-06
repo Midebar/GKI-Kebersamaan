@@ -1,0 +1,382 @@
+/* =========================================================
+   SCRIPTURE QUEST — Play Page Styles
+   ========================================================= */
+
+/* ─── Layout ─────────────────────────────────────────────── */
+.play-wrap {
+  position: relative; z-index: 10;
+  max-width: 720px; margin: 0 auto;
+  padding: 1.5rem 1.5rem 4rem;
+  min-height: calc(100vh - 80px);
+}
+
+.play-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap; gap: 0.5rem;
+}
+
+.back-btn {
+  font-family: 'Cinzel', serif; font-size: 0.75rem;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--amber); text-decoration: none;
+  padding: 0.4rem 0.8rem;
+  border: 1px solid rgba(200,134,12,0.3);
+  transition: all 0.2s;
+}
+.back-btn:hover { background: rgba(200,134,12,0.1); }
+
+.play-mode-label {
+  font-family: 'Cinzel', serif; font-size: 0.9rem;
+  color: var(--cream); letter-spacing: 0.08em;
+}
+
+.score-pill {
+  font-family: 'Cinzel', serif; font-size: 0.78rem;
+  padding: 0.3rem 0.9rem;
+  background: rgba(200,134,12,0.1);
+  border: 1px solid rgba(200,134,12,0.3);
+  color: var(--amber-pale); letter-spacing: 0.12em;
+}
+
+/* ─── Card ───────────────────────────────────────────────── */
+.card {
+  background: var(--navy-mid);
+  border: 1px solid rgba(200,134,12,0.25);
+  border-radius: 4px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.card-loading {
+  padding: 4rem 2rem; text-align: center;
+  color: var(--cream-mid); font-style: italic;
+}
+
+.spinner {
+  width: 36px; height: 36px; margin: 0 auto 1rem;
+  border: 3px solid rgba(200,134,12,0.2);
+  border-top-color: var(--amber);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.card-body { padding: 2rem; }
+
+/* ─── Lyrics / Verse blocks ──────────────────────────────── */
+.lyric-block, .verse-block {
+  font-size: 1.15rem; line-height: 1.9;
+  color: var(--cream); font-style: italic;
+  text-align: center;
+  padding: 1.5rem 1rem;
+  border-left: 3px solid var(--amber);
+  background: rgba(200,134,12,0.05);
+  margin-bottom: 1.25rem;
+  white-space: pre-line;
+  position: relative;
+}
+
+.verse-block::before {
+  content: '\201C';
+  font-size: 5rem; line-height: 1;
+  color: var(--amber); opacity: 0.15;
+  position: absolute; top: -0.5rem; left: 0.5rem;
+  font-family: Georgia, serif;
+}
+
+.question-type-badge {
+  display: inline-block; margin-bottom: 0.75rem;
+  font-family: 'Cinzel', serif; font-size: 0.65rem;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid var(--sapphire-l);
+  color: #7aabff; background: rgba(26,58,124,0.3);
+  border-radius: 2px;
+}
+
+/* ─── Hint Strip ─────────────────────────────────────────── */
+.hint-strip {
+  display: flex; align-items: flex-start; gap: 0.6rem;
+  padding: 0.7rem 1rem;
+  background: rgba(139,21,32,0.1);
+  border: 1px solid rgba(139,21,32,0.3);
+  border-left: 3px solid var(--crimson-l);
+  margin-bottom: 1rem;
+  font-size: 0.95rem; color: var(--cream-mid);
+  font-style: italic;
+  animation: fadeIn 0.3s ease;
+}
+.hint-strip.always-visible { display: flex; }
+.hint-eye { flex-shrink: 0; }
+
+/* ─── Choices ────────────────────────────────────────────── */
+.choices {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.choice-btn {
+  font-family: 'Cinzel', serif; font-size: 0.78rem;
+  letter-spacing: 0.05em;
+  padding: 0.8rem 0.75rem;
+  background: transparent;
+  border: 1px solid rgba(200,134,12,0.25);
+  color: var(--cream-mid);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center; line-height: 1.3;
+}
+.choice-btn:hover:not(:disabled) {
+  background: rgba(200,134,12,0.1);
+  border-color: var(--amber);
+  color: var(--cream);
+}
+.choice-btn.correct {
+  background: rgba(26,92,58,0.3);
+  border-color: var(--jade-l);
+  color: #7fffa8; font-weight: 600;
+}
+.choice-btn.wrong {
+  background: rgba(139,21,32,0.2);
+  border-color: var(--crimson);
+  color: var(--crimson-l); text-decoration: line-through; opacity: 0.6;
+}
+.choice-btn:disabled { cursor: not-allowed; }
+
+/* ─── Feedback ───────────────────────────────────────────── */
+.feedback {
+  text-align: center; padding: 0.75rem;
+  font-family: 'Cinzel', serif; font-size: 0.85rem;
+  letter-spacing: 0.08em; border-radius: 2px;
+  margin-bottom: 0.75rem; display: none;
+  animation: fadeIn 0.3s ease;
+}
+.feedback.correct {
+  display: block; background: rgba(26,92,58,0.2);
+  border: 1px solid var(--jade-l); color: #7fffa8;
+}
+.feedback.wrong {
+  display: block; background: rgba(139,21,32,0.2);
+  border: 1px solid var(--crimson); color: #ff8090;
+}
+.feedback.info {
+  display: block; background: rgba(200,134,12,0.1);
+  border: 1px solid var(--amber); color: var(--amber-pale);
+}
+
+/* ─── Fun Fact ───────────────────────────────────────────── */
+.fun-fact-box {
+  padding: 1rem 1.25rem;
+  background: rgba(26,58,124,0.15);
+  border: 1px solid rgba(42,84,168,0.3);
+  border-left: 3px solid var(--sapphire-l);
+  font-size: 0.95rem; color: var(--cream-mid);
+  font-style: italic; line-height: 1.6;
+  margin-bottom: 1rem;
+  animation: fadeIn 0.4s ease;
+}
+.fun-fact-box::before {
+  content: '📖 ';
+  font-style: normal;
+}
+
+/* ─── Controls ───────────────────────────────────────────── */
+.card-controls {
+  display: flex; gap: 0.75rem; justify-content: center;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(200,134,12,0.15);
+  flex-wrap: wrap;
+}
+
+.btn-ghost, .btn-primary {
+  font-family: 'Cinzel', serif; font-size: 0.75rem;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 0.7rem 1.4rem; cursor: pointer;
+  border: 1px solid; transition: all 0.25s;
+  min-width: 130px;
+}
+
+.btn-ghost {
+  background: transparent;
+  border-color: var(--crimson);
+  color: #ff8090;
+}
+.btn-ghost:hover { background: rgba(139,21,32,0.2); }
+
+.btn-primary {
+  background: var(--amber);
+  border-color: var(--amber);
+  color: var(--ink); font-weight: 700;
+}
+.btn-primary:hover {
+  background: var(--amber-light);
+  box-shadow: 0 4px 20px rgba(200,134,12,0.4);
+  transform: translateY(-1px);
+}
+.btn-primary.small { padding: 0.55rem 0.9rem; min-width: auto; font-size: 0.7rem; }
+
+/* ─── Music player ───────────────────────────────────────── */
+.music-player {
+  margin-bottom: 1.25rem;
+  padding: 0.75rem;
+  background: rgba(200,134,12,0.05);
+  border: 1px solid rgba(200,134,12,0.15);
+}
+audio { width: 100%; }
+
+/* ─── Image Arena ────────────────────────────────────────── */
+.image-arena {
+  position: relative; margin-bottom: 1rem;
+  background: #000; border: 1px solid rgba(200,134,12,0.2);
+  overflow: hidden;
+  min-height: 280px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+#img-canvas {
+  max-width: 100%; display: block;
+  image-rendering: pixelated;
+}
+
+.reveal-overlay {
+  position: absolute; inset: 0;
+  pointer-events: none;
+}
+
+/* Fragment tiles — they disappear as image reveals */
+.frag-tile {
+  position: absolute;
+  background: var(--navy-mid);
+  transition: opacity 0.6s ease;
+  border: 1px solid rgba(200,134,12,0.08);
+}
+.frag-tile.revealed { opacity: 0; pointer-events: none; }
+
+.reveal-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.6rem 0; margin-bottom: 1rem;
+  flex-wrap: wrap; gap: 0.5rem;
+}
+
+.reveal-label {
+  font-family: 'Cinzel', serif; font-size: 0.75rem;
+  letter-spacing: 0.1em; color: var(--amber); opacity: 0.8;
+}
+
+.btn-reveal {
+  font-family: 'Cinzel', serif; font-size: 0.72rem;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 0.5rem 1rem; cursor: pointer;
+  background: rgba(26,92,58,0.2);
+  border: 1px solid var(--jade-l);
+  color: #7fffa8;
+  transition: all 0.2s;
+}
+.btn-reveal:hover { background: rgba(26,92,58,0.35); }
+.btn-reveal:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ─── Wordle ─────────────────────────────────────────────── */
+.wordle-card .card-body { padding: 1.5rem; }
+
+.wordle-meta {
+  display: flex; gap: 0.5rem; flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.wordle-cat, .wordle-len, .wordle-att {
+  font-family: 'Cinzel', serif; font-size: 0.65rem;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 0.25rem 0.65rem;
+  border: 1px solid rgba(200,134,12,0.25);
+  color: var(--amber-pale);
+}
+
+#wordle-grid {
+  display: flex; flex-direction: column;
+  gap: 5px; align-items: center;
+  margin: 1rem 0;
+}
+
+.wordle-row { display: flex; gap: 5px; }
+
+.wordle-cell {
+  width: 46px; height: 46px;
+  border: 2px solid rgba(200,134,12,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cinzel', serif; font-size: 1.1rem; font-weight: 700;
+  color: var(--cream); text-transform: uppercase;
+  background: rgba(30,51,80,0.6);
+  transition: border-color 0.15s;
+  user-select: none;
+}
+.wordle-cell.filled { border-color: rgba(200,134,12,0.6); }
+.wordle-cell.correct { background: #1a5c3a; border-color: #28804e; color: #b0ffca; }
+.wordle-cell.present { background: #7a5200; border-color: #aa7400; color: #ffd060; }
+.wordle-cell.absent  { background: #1a2030; border-color: #2a3040; color: #607080; }
+
+.wordle-cell.flip { animation: cellFlip 0.45s ease forwards; }
+@keyframes cellFlip {
+  0%   { transform: rotateX(0); }
+  50%  { transform: rotateX(90deg); background: var(--navy); }
+  100% { transform: rotateX(0); }
+}
+.wordle-cell.shake { animation: shake 0.35s ease; }
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  20%      { transform: translateX(-5px); }
+  40%      { transform: translateX(5px); }
+  60%      { transform: translateX(-4px); }
+  80%      { transform: translateX(4px); }
+}
+
+/* Keyboard */
+#wordle-keyboard {
+  display: flex; flex-direction: column; gap: 5px;
+  align-items: center; margin-bottom: 1rem;
+}
+.kb-row { display: flex; gap: 4px; }
+.kb-key {
+  font-family: 'Cinzel', serif; font-size: 0.68rem; font-weight: 600;
+  width: 32px; height: 38px;
+  border: 1px solid rgba(200,134,12,0.2);
+  background: rgba(30,51,80,0.7);
+  color: var(--cream); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s; user-select: none;
+}
+.kb-key:hover { background: rgba(200,134,12,0.15); }
+.kb-key.wide { width: 48px; font-size: 0.58rem; }
+.kb-key.correct { background: #1a5c3a; border-color: #28804e; color: #b0ffca; }
+.kb-key.present { background: #7a5200; border-color: #aa7400; color: #ffd060; }
+.kb-key.absent  { background: #1a2030; border-color: #2a3040; color: #607080; }
+
+.wordle-input-row {
+  display: flex; gap: 0.5rem; margin-bottom: 0.75rem;
+}
+#wordle-input {
+  flex: 1;
+  font-family: 'Cinzel', serif; font-size: 0.9rem;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  padding: 0.6rem 0.85rem;
+  background: rgba(30,51,80,0.6);
+  border: 1px solid rgba(200,134,12,0.3);
+  color: var(--cream); outline: none;
+}
+#wordle-input:focus { border-color: var(--amber); }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Responsive ─────────────────────────────────────────── */
+@media (max-width: 540px) {
+  .card-body { padding: 1.25rem; }
+  .choices { grid-template-columns: 1fr; }
+  .wordle-cell { width: 36px; height: 36px; font-size: 0.9rem; }
+  .kb-key { width: 26px; height: 34px; font-size: 0.58rem; }
+  .kb-key.wide { width: 40px; }
+}
